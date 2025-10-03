@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archfar's Shipyard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        select, input {
+            width: 90%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .grayed-out {
+            background-color: #e9e9e9;
+            color: #666;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #e8f4f8;
+        }
+        .component-name {
+            text-align: left;
+            font-weight: bold;
+        }
+        .negative-value {
+            background-color: #ffcccc;
+        }
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+            table {
+                font-size: 14px;
+            }
+            th, td {
+                padding: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Archfar's Shipyard</h1>
+    
+    <table id="shipTable">
+        <thead>
+            <tr>
+                <th>Components</th>
+                <th>User input</th>
+                <th>Deck size (25ft sq)</th>
+                <th>Target area</th>
+                <th>Cargo (ton)</th>
+                <th>Speed</th>
+                <th>Mass</th>
+                <th>Maneuver</th>
+                <th>HP</th>
+                <th>Crew</th>
+                <th>Hitable?</th>
+                <th>On hit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Frame Row -->
+            <tr>
+                <td class="component-name">Frame</td>
+                <td>
+                    <select id="frameInput">
+                        <option value="Small">Small</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Large">Large</option>
+                    </select>
+                </td>
+                <td id="frameDeck">10</td>
+                <td id="frameTarget">1</td>
+                <td id="frameCargo">5</td>
+                <td id="frameSpeed">7</td>
+                <td id="frameMass">20</td>
+                <td id="frameManeuver">2</td>
+                <td id="frameHP">20</td>
+                <td id="frameCrew">4</td>
+                <td id="frameHitable">no</td>
+                <td id="frameOnHit"></td>
+            </tr>
+            
+            <!-- Helm Row -->
+            <tr>
+                <td class="component-name">Helm</td>
+                <td>
+                    <input type="number" id="helmInput" min="1" max="2" value="1">
+                </td>
+                <td id="helmDeck">9</td>
+                <td id="helmTarget">1</td>
+                <td id="helmCargo">0</td>
+                <td id="helmSpeed">0</td>
+                <td id="helmMass">1</td>
+                <td id="helmManeuver">0</td>
+                <td id="helmHP">1</td>
+                <td id="helmCrew">1</td>
+                <td id="helmHitable">yes</td>
+                <td id="helmOnHit">Pilot check -10 or lost control</td>
+            </tr>
+            
+            <!-- Keel Row -->
+            <tr>
+                <td class="component-name">Keel</td>
+                <td>
+                    <input type="number" id="keelInput" class="grayed-out" value="1" readonly>
+                </td>
+                <td id="keelDeck">0</td>
+                <td id="keelTarget">1</td>
+                <td id="keelCargo">0</td>
+                <td id="keelSpeed">0</td>
+                <td id="keelMass">0</td>
+                <td id="keelManeuver">0</td>
+                <td id="keelHP">0</td>
+                <td id="keelCrew">0</td>
+                <td id="keelHitable">yes</td>
+                <td id="keelOnHit">2x HP Dmg</td>
+            </tr>
+            
+            <!-- Sail Row -->
+            <tr>
+                <td class="component-name">Sail (100 sq ft)</td>
+                <td>
+                    <input type="number" id="sailInput" min="0" value="1">
+                </td>
+                <td id="sailDeck">9</td>
+                <td id="sailTarget">1</td>
+                <td id="sailCargo">0</td>
+                <td id="sailSpeed">1</td>
+                <td id="sailMass">1</td>
+                <td id="sailManeuver">0.2</td>
+                <td id="sailHP">0</td>
+                <td id="sailCrew">2</td>
+                <td id="sailHitable">yes</td>
+                <td id="sailOnHit">Speed -1</td>
+            </tr>
+            
+            <!-- Ruddler Row -->
+            <tr>
+                <td class="component-name">Ruddler</td>
+                <td>
+                    <input type="number" id="ruddlerInput" min="0" value="1">
+                </td>
+                <td id="ruddlerDeck">0</td>
+                <td id="ruddlerTarget">1</td>
+                <td id="ruddlerCargo">0</td>
+                <td id="ruddlerSpeed">1</td>
+                <td id="ruddlerMass">-1</td>
+                <td id="ruddlerManeuver">10</td>
+                <td id="ruddlerHP">2</td>
+                <td id="ruddlerCrew">2</td>
+                <td id="ruddlerHitable">yes</td>
+                <td id="ruddlerOnHit">Maneuver -1</td>
+            </tr>
+            
+            <!-- Hull Row -->
+            <tr>
+                <td class="component-name">Hull (10 ton)</td>
+                <td>
+                    <input type="number" id="hullInput" min="0" value="0">
+                </td>
+                <td id="hullDeck">5</td>
+                <td id="hullTarget">1</td>
+                <td id="hullCargo">10</td>
+                <td id="hullSpeed">-1</td>
+                <td id="hullMass">10</td>
+                <td id="hullManeuver">-0.2</td>
+                <td id="hullHP">50</td>
+                <td id="hullCrew">2</td>
+                <td id="hullHitable">yes</td>
+                <td id="hullOnHit">HP -1</td>
+            </tr>
+            
+            <!-- Large Weapon Anchor Row -->
+            <tr>
+                <td class="component-name">Large Weapon anchor</td>
+                <td>
+                    <input type="number" id="largeWeaponInput" min="0" value="0">
+                </td>
+                <td id="largeWeaponDeck">6</td>
+                <td id="largeWeaponTarget">1</td>
+                <td id="largeWeaponCargo">0</td>
+                <td id="largeWeaponSpeed">0</td>
+                <td id="largeWeaponMass">1</td>
+                <td id="largeWeaponManeuver">0</td>
+                <td id="largeWeaponHP">0</td>
+                <td id="largeWeaponCrew">6</td>
+                <td id="largeWeaponHitable">yes</td>
+                <td id="largeWeaponOnHit">Weapon disabled, Dmg to crew using it</td>
+            </tr>
+            
+            <!-- Std Weapon Anchor Row -->
+            <tr>
+                <td class="component-name">Std Weapon anchor</td>
+                <td>
+                    <input type="number" id="stdWeaponInput" min="0" value="0">
+                </td>
+                <td id="stdWeaponDeck">4</td>
+                <td id="stdWeaponTarget">1</td>
+                <td id="stdWeaponCargo">0</td>
+                <td id="stdWeaponSpeed">0</td>
+                <td id="stdWeaponMass">1</td>
+                <td id="stdWeaponManeuver">0</td>
+                <td id="stdWeaponHP">0</td>
+                <td id="stdWeaponCrew">5</td>
+                <td id="stdWeaponHitable">yes</td>
+                <td id="stdWeaponOnHit">Weapon disabled, Dmg to crew using it</td>
+            </tr>
+            
+            <!-- Armor Row -->
+            <tr>
+                <td class="component-name">Armor</td>
+                <td>
+                    <select id="armorInput">
+                        <option value="Wood">Wood</option>
+                        <option value="Metal Plated">Metal Plated</option>
+                        <option value="Metal armored">Metal armored</option>
+                    </select>
+                </td>
+                <td id="armorDeck">0</td>
+                <td id="armorTarget">0</td>
+                <td id="armorCargo">0</td>
+                <td id="armorSpeed">0</td>
+                <td id="armorMass">0</td>
+                <td id="armorManeuver">0</td>
+                <td id="armorHP">5</td>
+                <td id="armorCrew">0</td>
+                <td id="armorHitable">no</td>
+                <td id="armorOnHit"></td>
+            </tr>
+            
+            <!-- Ram Row -->
+            <tr>
+                <td class="component-name">Ram</td>
+                <td>
+                    <input type="number" id="ramInput" min="0" max="1" value="0">
+                </td>
+                <td id="ramDeck">0</td>
+                <td id="ramTarget">0</td>
+                <td id="ramCargo">-10</td>
+                <td id="ramSpeed">0</td>
+                <td id="ramMass">10</td>
+                <td id="ramManeuver">0</td>
+                <td id="ramHP">0</td>
+                <td id="ramCrew">1</td>
+                <td id="ramHitable">no</td>
+                <td id="ramOnHit"></td>
+            </tr>
+            
+            <!-- Total Row -->
+            <tr class="total-row">
+                <td class="component-name">Total</td>
+                <td></td>
+                <td id="totalDeck">34</td>
+                <td id="totalTarget">6</td>
+                <td id="totalCargo">5</td>
+                <td id="totalSpeed">7</td>
+                <td id="totalMass">12</td>
+                <td id="totalManeuver">11.8</td>
+                <td id="totalHP">78</td>
+                <td id="totalCrew">21</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Component data with corrected values
+        const componentData = {
+            frame: {
+                Small: { deck: 10, target: 1, cargo: 5, speed: 7, mass: 20, maneuver: 2, hp: 20, crew: 4, hitable: "no", onHit: "" },
+                Medium: { deck: 20, target: 2, cargo: 5, speed: 5, mass: 50, maneuver: 3, hp: 40, crew: 10, hitable: "no", onHit: "" },
+                Large: { deck: 30, target: 2, cargo: 5, speed: 5, mass: 100, maneuver: 3, hp: 40, crew: 10, hitable: "no", onHit: "" }
+            },
+            helm: { deck: 9, target: 1, cargo: 0, speed: 0, mass: 1, maneuver: 0, hp: 1, crew: 1, hitable: "yes", onHit: "Pilot check -10 or lost control" },
+            keel: { deck: 0, target: 1, cargo: 0, speed: 0, mass: 0, maneuver: 0, hp: 0, crew: 0, hitable: "yes", onHit: "2x HP Dmg" },
+            sail: { deck: 9, target: 1, cargo: 0, speed: 1, mass: 1, maneuver: 0.2, hp: 0, crew: 2, hitable: "yes", onHit: "Speed -1" },
+            ruddler: { deck: 0, target: 1, cargo: 0, speed: 1, mass: -1, maneuver: 10, hp: 2, crew: 2, hitable: "yes", onHit: "Maneuver -1" },
+            hull: { deck: 5, target: 1, cargo: 10, speed: -1, mass: 10, maneuver: -0.2, hp: 50, crew: 2, hitable: "yes", onHit: "HP -1" },
+            largeWeapon: { deck: 6, target: 1, cargo: 0, speed: 0, mass: 1, maneuver: 0, hp: 0, crew: 6, hitable: "yes", onHit: "Weapon disabled, Dmg to crew using it" },
+            stdWeapon: { deck: 4, target: 1, cargo: 0, speed: 0, mass: 1, maneuver: 0, hp: 0, crew: 5, hitable: "yes", onHit: "Weapon disabled, Dmg to crew using it" },
+            armor: {
+                Wood: { deck: 0, target: 0, cargo: 0, speed: 0, mass: 0, maneuver: 0, hp: 5, crew: 0, hitable: "no", onHit: "" },
+                "Metal Plated": { deck: 0, target: 0, cargo: 0, speed: 0, mass: "20%", maneuver: -1, hp: "50%", crew: 10, hitable: "no", onHit: "" },
+                "Metal armored": { deck: 0, target: 0, cargo: 0, speed: 0, mass: "50%", maneuver: -2, hp: "100%", crew: 20, hitable: "no", onHit: "" }
+            },
+            ram: { deck: 0, target: 0, cargo: -10, speed: 0, mass: 10, maneuver: 0, hp: 0, crew: 1, hitable: "no", onHit: "" }
+        };
+
+        // Get all input elements
+        const frameInput = document.getElementById('frameInput');
+        const helmInput = document.getElementById('helmInput');
+        const keelInput = document.getElementById('keelInput');
+        const sailInput = document.getElementById('sailInput');
+        const ruddlerInput = document.getElementById('ruddlerInput');
+        const hullInput = document.getElementById('hullInput');
+        const largeWeaponInput = document.getElementById('largeWeaponInput');
+        const stdWeaponInput = document.getElementById('stdWeaponInput');
+        const armorInput = document.getElementById('armorInput');
+        const ramInput = document.getElementById('ramInput');
+
+        // Add event listeners to all inputs
+        frameInput.addEventListener('change', updateAll);
+        helmInput.addEventListener('input', updateAll);
+        sailInput.addEventListener('input', updateAll);
+        ruddlerInput.addEventListener('input', updateAll);
+        hullInput.addEventListener('input', updateAll);
+        largeWeaponInput.addEventListener('input', updateAll);
+        stdWeaponInput.addEventListener('input', updateAll);
+        armorInput.addEventListener('change', updateAll);
+        ramInput.addEventListener('input', updateAll);
+
+        // Initialize the table
+        updateAll();
+
+        function updateAll() {
+            updateFrame();
+            updateHelm();
+            updateKeel();
+            updateSail();
+            updateRuddler();
+            updateHull();
+            updateLargeWeapon();
+            updateStdWeapon();
+            updateArmor();
+            updateRam();
+            updateTotal();
+        }
+
+        function updateFrame() {
+            const frameType = frameInput.value;
+            const data = componentData.frame[frameType];
+            
+            document.getElementById('frameDeck').textContent = data.deck;
+            document.getElementById('frameTarget').textContent = data.target;
+            document.getElementById('frameCargo').textContent = data.cargo;
+            document.getElementById('frameSpeed').textContent = data.speed;
+            document.getElementById('frameMass').textContent = data.mass;
+            document.getElementById('frameManeuver').textContent = data.maneuver;
+            document.getElementById('frameHP').textContent = data.hp;
+            document.getElementById('frameCrew').textContent = data.crew;
+            document.getElementById('frameHitable').textContent = data.hitable;
+            document.getElementById('frameOnHit').textContent = data.onHit;
+        }
+
+        function updateHelm() {
+            const value = parseInt(helmInput.value) || 1;
+            if (value < 1) helmInput.value = 1;
+            if (value > 2) helmInput.value = 2;
+            
+            const data = componentData.helm;
+            
+            document.getElementById('helmDeck').textContent = data.deck * value;
+            document.getElementById('helmTarget').textContent = data.target * value;
+            document.getElementById('helmCargo').textContent = data.cargo * value;
+            document.getElementById('helmSpeed').textContent = data.speed * value;
+            document.getElementById('helmMass').textContent = data.mass * value;
+            document.getElementById('helmManeuver').textContent = data.maneuver * value;
+            document.getElementById('helmHP').textContent = data.hp * value;
+            document.getElementById('helmCrew').textContent = data.crew * value;
+            document.getElementById('helmHitable').textContent = data.hitable;
+            document.getElementById('helmOnHit').textContent = data.onHit;
+        }
+
+        function updateKeel() {
+            const data = componentData.keel;
+            
+            document.getElementById('keelDeck').textContent = data.deck;
+            document.getElementById('keelTarget').textContent = data.target;
+            document.getElementById('keelCargo').textContent = data.cargo;
+            document.getElementById('keelSpeed').textContent = data.speed;
+            document.getElementById('keelMass').textContent = data.mass;
+            document.getElementById('keelManeuver').textContent = data.maneuver;
+            document.getElementById('keelHP').textContent = data.hp;
+            document.getElementById('keelCrew').textContent = data.crew;
+            document.getElementById('keelHitable').textContent = data.hitable;
+            document.getElementById('keelOnHit').textContent = data.onHit;
+        }
+
+        function updateSail() {
+            const value = parseInt(sailInput.value) || 0;
+            if (value < 0) sailInput.value = 0;
+            
+            const data = componentData.sail;
+            
+            document.getElementById('sailDeck').textContent = data.deck * value;
+            document.getElementById('sailTarget').textContent = data.target * value;
+            document.getElementById('sailCargo').textContent = data.cargo * value;
+            document.getElementById('sailSpeed').textContent = data.speed * value;
+            document.getElementById('sailMass').textContent = data.mass * value;
+            document.getElementById('sailManeuver').textContent = data.maneuver * value;
+            document.getElementById('sailHP').textContent = data.hp * value;
+            document.getElementById('sailCrew').textContent = data.crew * value;
+            document.getElementById('sailHitable').textContent = data.hitable;
+            document.getElementById('sailOnHit').textContent = data.onHit;
+        }
+
+        function updateRuddler() {
+            const value = parseInt(ruddlerInput.value) || 0;
+            if (value < 0) ruddlerInput.value = 0;
+            
+            const data = componentData.ruddler;
+            
+            document.getElementById('ruddlerDeck').textContent = data.deck * value;
+            document.getElementById('ruddlerTarget').textContent = data.target * value;
+            document.getElementById('ruddlerCargo').textContent = data.cargo * value;
+            document.getElementById('ruddlerSpeed').textContent = data.speed * value;
+            document.getElementById('ruddlerMass').textContent = data.mass * value;
+            document.getElementById('ruddlerManeuver').textContent = data.maneuver * value;
+            document.getElementById('ruddlerHP').textContent = data.hp * value;
+            document.getElementById('ruddlerCrew').textContent = data.crew * value;
+            document.getElementById('ruddlerHitable').textContent = data.hitable;
+            document.getElementById('ruddlerOnHit').textContent = data.onHit;
+        }
+
+        function updateHull() {
+            const value = parseInt(hullInput.value) || 0;
+            if (value < 0) hullInput.value = 0;
+            
+            const data = componentData.hull;
+            
+            document.getElementById('hullDeck').textContent = data.deck * value;
+            document.getElementById('hullTarget').textContent = data.target * value;
+            document.getElementById('hullCargo').textContent = data.cargo * value;
+            document.getElementById('hullSpeed').textContent = data.speed * value;
+            document.getElementById('hullMass').textContent = data.mass * value;
+            document.getElementById('hullManeuver').textContent = data.maneuver * value;
+            document.getElementById('hullHP').textContent = data.hp * value;
+            document.getElementById('hullCrew').textContent = data.crew * value;
+            document.getElementById('hullHitable').textContent = data.hitable;
+            document.getElementById('hullOnHit').textContent = data.onHit;
+        }
+
+        function updateLargeWeapon() {
+            const value = parseInt(largeWeaponInput.value) || 0;
+            if (value < 0) largeWeaponInput.value = 0;
+            
+            const data = componentData.largeWeapon;
+            
+            document.getElementById('largeWeaponDeck').textContent = data.deck * value;
+            document.getElementById('largeWeaponTarget').textContent = data.target * value;
+            document.getElementById('largeWeaponCargo').textContent = data.cargo * value;
+            document.getElementById('largeWeaponSpeed').textContent = data.speed * value;
+            document.getElementById('largeWeaponMass').textContent = data.mass * value;
+            document.getElementById('largeWeaponManeuver').textContent = data.maneuver * value;
+            document.getElementById('largeWeaponHP').textContent = data.hp * value;
+            document.getElementById('largeWeaponCrew').textContent = data.crew * value;
+            document.getElementById('largeWeaponHitable').textContent = data.hitable;
+            document.getElementById('largeWeaponOnHit').textContent = data.onHit;
+        }
+
+        function updateStdWeapon() {
+            const value = parseInt(stdWeaponInput.value) || 0;
+            if (value < 0) stdWeaponInput.value = 0;
+            
+            const data = componentData.stdWeapon;
+            
+            document.getElementById('stdWeaponDeck').textContent = data.deck * value;
+            document.getElementById('stdWeaponTarget').textContent = data.target * value;
+            document.getElementById('stdWeaponCargo').textContent = data.cargo * value;
+            document.getElementById('stdWeaponSpeed').textContent = data.speed * value;
+            document.getElementById('stdWeaponMass').textContent = data.mass * value;
+            document.getElementById('stdWeaponManeuver').textContent = data.maneuver * value;
+            document.getElementById('stdWeaponHP').textContent = data.hp * value;
+            document.getElementById('stdWeaponCrew').textContent = data.crew * value;
+            document.getElementById('stdWeaponHitable').textContent = data.hitable;
+            document.getElementById('stdWeaponOnHit').textContent = data.onHit;
+        }
+
+        function updateArmor() {
+            const armorType = armorInput.value;
+            const data = componentData.armor[armorType];
+            
+            document.getElementById('armorDeck').textContent = data.deck;
+            document.getElementById('armorTarget').textContent = data.target;
+            document.getElementById('armorCargo').textContent = data.cargo;
+            document.getElementById('armorSpeed').textContent = data.speed;
+            document.getElementById('armorMass').textContent = data.mass;
+            document.getElementById('armorManeuver').textContent = data.maneuver;
+            document.getElementById('armorHP').textContent = data.hp;
+            document.getElementById('armorCrew').textContent = data.crew;
+            document.getElementById('armorHitable').textContent = data.hitable;
+            document.getElementById('armorOnHit').textContent = data.onHit;
+        }
+
+        function updateRam() {
+            const value = parseInt(ramInput.value) || 0;
+            if (value < 0) ramInput.value = 0;
+            if (value > 1) ramInput.value = 1;
+            
+            const data = componentData.ram;
+            
+            document.getElementById('ramDeck').textContent = data.deck * value;
+            document.getElementById('ramTarget').textContent = data.target * value;
+            document.getElementById('ramCargo').textContent = data.cargo * value;
+            document.getElementById('ramSpeed').textContent = data.speed * value;
+            document.getElementById('ramMass').textContent = data.mass * value;
+            document.getElementById('ramManeuver').textContent = data.maneuver * value;
+            document.getElementById('ramHP').textContent = data.hp * value;
+            document.getElementById('ramCrew').textContent = data.crew * value;
+            document.getElementById('ramHitable').textContent = data.hitable;
+            document.getElementById('ramOnHit').textContent = data.onHit;
+        }
+
+        function updateTotal() {
+            // Get all component values
+            const frameType = frameInput.value;
+            const frameData = componentData.frame[frameType];
+            
+            const helmValue = parseInt(helmInput.value) || 0;
+            const helmData = componentData.helm;
+            
+            const keelData = componentData.keel;
+            
+            const sailValue = parseInt(sailInput.value) || 0;
+            const sailData = componentData.sail;
+            
+            const ruddlerValue = parseInt(ruddlerInput.value) || 0;
+            const ruddlerData = componentData.ruddler;
+            
+            const hullValue = parseInt(hullInput.value) || 0;
+            const hullData = componentData.hull;
+            
+            const largeWeaponValue = parseInt(largeWeaponInput.value) || 0;
+            const largeWeaponData = componentData.largeWeapon;
+            
+            const stdWeaponValue = parseInt(stdWeaponInput.value) || 0;
+            const stdWeaponData = componentData.stdWeapon;
+            
+            const armorType = armorInput.value;
+            const armorData = componentData.armor[armorType];
+            
+            const ramValue = parseInt(ramInput.value) || 0;
+            const ramData = componentData.ram;
+            
+            // Calculate base totals without armor percentage effects
+            let deckTotal = frameData.deck + 
+                           (helmData.deck * helmValue) + 
+                           keelData.deck + 
+                           (sailData.deck * sailValue) + 
+                           (ruddlerData.deck * ruddlerValue) + 
+                           (hullData.deck * hullValue) + 
+                           (largeWeaponData.deck * largeWeaponValue) + 
+                           (stdWeaponData.deck * stdWeaponValue) + 
+                           armorData.deck + 
+                           (ramData.deck * ramValue);
+            
+            let targetTotal = frameData.target + 
+                             (helmData.target * helmValue) + 
+                             keelData.target + 
+                             (sailData.target * sailValue) + 
+                             (ruddlerData.target * ruddlerValue) + 
+                             (hullData.target * hullValue) + 
+                             (largeWeaponData.target * largeWeaponValue) + 
+                             (stdWeaponData.target * stdWeaponValue) + 
+                             armorData.target + 
+                             (ramData.target * ramValue);
+            
+            let cargoTotal = frameData.cargo + 
+                            (helmData.cargo * helmValue) + 
+                            keelData.cargo + 
+                            (sailData.cargo * sailValue) + 
+                            (ruddlerData.cargo * ruddlerValue) + 
+                            (hullData.cargo * hullValue) + 
+                            (largeWeaponData.cargo * largeWeaponValue) + 
+                            (stdWeaponData.cargo * stdWeaponValue) + 
+                            armorData.cargo + 
+                            (ramData.cargo * ramValue);
+            
+            let speedTotal = frameData.speed + 
+                            (helmData.speed * helmValue) + 
+                            keelData.speed + 
+                            (sailData.speed * sailValue) + 
+                            (ruddlerData.speed * ruddlerValue) + 
+                            (hullData.speed * hullValue) + 
+                            (largeWeaponData.speed * largeWeaponValue) + 
+                            (stdWeaponData.speed * stdWeaponValue) + 
+                            armorData.speed + 
+                            (ramData.speed * ramValue);
+            
+            let maneuverTotal = frameData.maneuver + 
+                               (helmData.maneuver * helmValue) + 
+                               keelData.maneuver + 
+                               (sailData.maneuver * sailValue) + 
+                               (ruddlerData.maneuver * ruddlerValue) + 
+                               (hullData.maneuver * hullValue) + 
+                               (largeWeaponData.maneuver * largeWeaponValue) + 
+                               (stdWeaponData.maneuver * stdWeaponValue) + 
+                               armorData.maneuver + 
+                               (ramData.maneuver * ramValue);
+            
+            let hpTotal = frameData.hp + 
+                         (helmData.hp * helmValue) + 
+                         keelData.hp + 
+                         (sailData.hp * sailValue) + 
+                         (ruddlerData.hp * ruddlerValue) + 
+                         (hullData.hp * hullValue) + 
+                         (largeWeaponData.hp * largeWeaponValue) + 
+                         (stdWeaponData.hp * stdWeaponValue) + 
+                         (ramData.hp * ramValue);
+            
+            let crewTotal = frameData.crew + 
+                           (helmData.crew * helmValue) + 
+                           keelData.crew + 
+                           (sailData.crew * sailValue) + 
+                           (ruddlerData.crew * ruddlerValue) + 
+                           (hullData.crew * hullValue) + 
+                           (largeWeaponData.crew * largeWeaponValue) + 
+                           (stdWeaponData.crew * stdWeaponValue) + 
+                           armorData.crew + 
+                           (ramData.crew * ramValue);
+            
+            // Calculate mass without frame for special calculation
+            let massWithoutFrame = (helmData.mass * helmValue) + 
+                                  keelData.mass + 
+                                  (sailData.mass * sailValue) + 
+                                  (ruddlerData.mass * ruddlerValue) + 
+                                  (hullData.mass * hullValue) + 
+                                  (largeWeaponData.mass * largeWeaponValue) + 
+                                  (stdWeaponData.mass * stdWeaponValue) + 
+                                  (ramData.mass * ramValue);
+            
+            // Apply armor percentage effects to MASS
+            let massTotal = massWithoutFrame;
+            if (typeof armorData.mass === 'string' && armorData.mass.includes('%')) {
+                const percentage = parseInt(armorData.mass) / 100;
+                massTotal = Math.round(massTotal * (1 + percentage));
+            }
+            
+            // Apply armor percentage effects to HP
+            if (typeof armorData.hp === 'string' && armorData.hp.includes('%')) {
+                const percentage = parseInt(armorData.hp) / 100;
+                hpTotal = Math.round(hpTotal * (1 + percentage));
+            }
+            
+            // Subtract frame mass as per special rule
+            massTotal = massTotal - frameData.mass;
+            
+            // Update total row and apply negative value styling
+            updateTotalCell('totalDeck', deckTotal);
+            updateTotalCell('totalTarget', targetTotal);
+            updateTotalCell('totalCargo', cargoTotal);
+            updateTotalCell('totalSpeed', speedTotal);
+            updateTotalCell('totalMass', massTotal);
+            updateTotalCell('totalManeuver', maneuverTotal, true);
+            updateTotalCell('totalHP', hpTotal);
+            updateTotalCell('totalCrew', crewTotal);
+        }
+
+        function updateTotalCell(cellId, value, isDecimal = false) {
+            const cell = document.getElementById(cellId);
+            if (isDecimal) {
+                cell.textContent = value.toFixed(1);
+            } else {
+                cell.textContent = value;
+            }
+            
+            // Apply negative value styling
+            if (value < 0) {
+                cell.classList.add('negative-value');
+            } else {
+                cell.classList.remove('negative-value');
+            }
+        }
+    </script>
+</body>
+</html>
