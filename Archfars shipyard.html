@@ -284,7 +284,7 @@
                 <td id="totalTarget">6</td>
                 <td id="totalCargo">5</td>
                 <td id="totalSpeed">7</td>
-                <td id="totalMass">12</td>
+                <td id="totalMass">-8</td>
                 <td id="totalManeuver">11.8</td>
                 <td id="totalHP">78</td>
                 <td id="totalCrew">21</td>
@@ -651,10 +651,9 @@
                                   (ramData.mass * ramValue);
             
             // Apply armor percentage effects to MASS
-            let massTotal = massWithoutFrame;
             if (typeof armorData.mass === 'string' && armorData.mass.includes('%')) {
                 const percentage = parseInt(armorData.mass) / 100;
-                massTotal = Math.round(massTotal * (1 + percentage));
+                massWithoutFrame = Math.round(massWithoutFrame * (1 + percentage));
             }
             
             // Apply armor percentage effects to HP
@@ -663,8 +662,8 @@
                 hpTotal = Math.round(hpTotal * (1 + percentage));
             }
             
-            // Subtract frame mass as per special rule
-            massTotal = massTotal - frameData.mass;
+            // CORRECTED MASS CALCULATION: Frame_mass - (sum all except Frame × armor_percentage)
+            let massTotal = frameData.mass - massWithoutFrame;
             
             // Update total row and apply negative value styling
             updateTotalCell('totalDeck', deckTotal);
