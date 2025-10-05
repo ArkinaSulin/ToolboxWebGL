@@ -440,9 +440,9 @@
                 default: "Small",
                 values: {
                     "Tiny": [35, 200, 10, 0, 0, 8, 2, 0, "no", "", 5000],
-                    "Small": [55, 250, 30, 0, 0, 8, 2, 0, "no", "", 15000],
-                    "Medium": [80, 350, 50, 0, 0, 6, 3, 0, "no", "", 35000],
-                    "Large": [100, 500, 90, 0, 0, 4, 4, 0, "no", "", 60000]
+                    "Small": [55, 250, 30, 0, 0, 9, 2, 0, "no", "", 15000],    // Speed max: 8 → 9
+                    "Medium": [80, 350, 50, 0, 0, 7, 3, 0, "no", "", 35000],   // Speed max: 6 → 7
+                    "Large": [100, 500, 90, 0, 0, 5, 4, 0, "no", "", 60000]    // Speed max: 4 → 5
                 },
                 cssClass: "frame-row"
             },
@@ -526,13 +526,13 @@
             special: {
                 name: "Special",
                 inputType: "dropdown",
-                options: ["", "Fragile structure -100 HP", "Living treant root reinforces ship +100 HP", 
+                options: ["", "Fragile structure -100 HP", "Living treant root reinforces ship +100 HP, act as 10 crew", 
                          "Bombard mount -150 HP +60 Mass", "Scorpion Claws -25 HP +10 Mass", "beholder floating magic -1 maneuver"],
                 default: "",
                 values: {
                     "": [0, 0, 0, 0, 0, 0, 0, 0, "no", "", 0],
                     "Fragile structure -100 HP": [0, -100, 0, 0, 0, 0, 0, 0, "no", "", 0],
-                    "Living treant root reinforces ship +100 HP": [0, 100, 0, 0, 0, 0, 0, 0, "no", "", 0],
+                    "Living treant root reinforces ship +100 HP, act as 10 crew": [0, 100, 0, 0, 0, 0, 0, -10, "no", "", 0],
                     "Bombard mount -150 HP +60 Mass": [-60, -150, 0, 0, 0, 0, 0, 0, "no", "", 0],
                     "Scorpion Claws -25 HP +10 Mass": [-10, -25, 0, 0, 0, 0, 0, 0, "no", "", 0],
                     "beholder floating magic -1 maneuver": [0, 0, 0, 0, 0, 0, -1, 0, "no", "", 0]
@@ -540,7 +540,7 @@
             }
         };
 
-        // Reference ships data with updated values from the provided HTML
+        // Reference ships data with ALL UPDATED VALUES
         const referenceShips = {
             "Bombard": {
                 frame: "Large",
@@ -548,12 +548,12 @@
                 components: {
                     helm: 1,
                     rudder: 3,
-                    sail: 2,
-                    cargo: 6,
+                    sail: 4,        // Changed from 2 to 4 (speed fix)
+                    cargo: 7,       // Changed from 6 to 7 (cargo fix)
                     stdWeapon: 2,
                     largeWeapon: 0,
-                    hullReinforcement: 6,
-                    additionalCrew: 4,
+                    hullReinforcement: 10,   // Changed from 6 to 10 (HP fix)
+                    additionalCrew: 3,       // Changed from 4 to 3 (crew fix)
                     special: "Bombard mount -150 HP +60 Mass"
                 },
                 preset: {
@@ -575,11 +575,11 @@
                     helm: 1,
                     rudder: 1,
                     sail: 7,
-                    cargo: 3,
+                    cargo: 2,       // Changed from 3 to 2 (cargo fix)
                     stdWeapon: 1,
                     largeWeapon: 1,
                     hullReinforcement: 7,
-                    additionalCrew: 2,
+                    additionalCrew: 1,       // Changed from 2 to 1 (crew fix)
                     special: ""
                 },
                 preset: {
@@ -599,13 +599,13 @@
                 armor: "Wood",
                 components: {
                     helm: 1,
-                    rudder: 2,
+                    rudder: 1,      // Changed from 2 to 1 (MC fix)
                     sail: 5,
                     cargo: 3,
                     stdWeapon: 4,
                     largeWeapon: 1,
-                    hullReinforcement: 16,
-                    additionalCrew: 5,
+                    hullReinforcement: 14,   // Changed from 16 to 14 (HP fix)
+                    additionalCrew: 6,       // Changed from 5 to 6 (crew fix)
                     special: ""
                 },
                 preset: {
@@ -631,7 +631,7 @@
                     stdWeapon: 1,
                     largeWeapon: 1,
                     hullReinforcement: 2,
-                    additionalCrew: -1,
+                    additionalCrew: -1,      // Kept -1 (crew fix)
                     special: ""
                 },
                 preset: {
@@ -677,13 +677,13 @@
                 armor: "Wood",
                 components: {
                     helm: 1,
-                    rudder: 2,
+                    rudder: 1,      // Changed from 2 to 1 (MC fix)
                     sail: 4,
                     cargo: 3,
                     stdWeapon: 4,
                     largeWeapon: 1,
-                    hullReinforcement: 14,
-                    additionalCrew: 5,
+                    hullReinforcement: 12,   // Changed from 14 to 12 (HP fix)
+                    additionalCrew: 6,       // Changed from 5 to 6 (crew fix)
                     special: ""
                 },
                 preset: {
@@ -709,8 +709,8 @@
                     stdWeapon: 2,
                     largeWeapon: 2,
                     hullReinforcement: 10,
-                    additionalCrew: -9,
-                    special: "Living treant root reinforces ship +100 HP"
+                    additionalCrew: 1,       // Changed from -9 to 1 (crew fix)
+                    special: "Living treant root reinforces ship +100 HP, act as 10 crew"
                 },
                 preset: {
                     hp: 500,
@@ -731,11 +731,11 @@
                     helm: 1,
                     rudder: 3,
                     sail: 4,
-                    cargo: 7,
+                    cargo: 8,       // Changed from 7 to 8 (cargo fix)
                     stdWeapon: 3,
                     largeWeapon: 3,
                     hullReinforcement: 10,
-                    additionalCrew: 7,
+                    additionalCrew: 6,       // Changed from 7 to 6 (crew fix)
                     special: ""
                 },
                 preset: {
@@ -761,7 +761,7 @@
                     stdWeapon: 2,
                     largeWeapon: 3,
                     hullReinforcement: 1,
-                    additionalCrew: 10,
+                    additionalCrew: 10,      // Changed from 11 to 10 (crew fix)
                     special: "Fragile structure -100 HP"
                 },
                 preset: {
@@ -795,7 +795,7 @@
                     deckSpace: 10,
                     damageThreshold: 15,
                     speed: 3,
-                    maneuver: 3,
+                    maneuver: 2,    // Changed from 3 to 2 (MC fix)
                     crew: 12,
                     cargo: 12,
                     cost: 40000
@@ -807,13 +807,13 @@
                 armor: "Wood",
                 components: {
                     helm: 1,
-                    rudder: 3,
+                    rudder: 2,      // Changed from 3 to 2 (MC fix)
                     sail: 7,
                     cargo: 10,
                     stdWeapon: 1,
                     largeWeapon: 2,
-                    hullReinforcement: 1,
-                    additionalCrew: -1,
+                    hullReinforcement: 0,    // Changed from 1 to 0 (HP fix)
+                    additionalCrew: 0,       // Changed from -1 to 0 (crew fix)
                     special: ""
                 },
                 preset: {
@@ -835,7 +835,7 @@
                     helm: 1,
                     rudder: 3,
                     sail: 3,
-                    cargo: 38,
+                    cargo: 37,      // Changed from 38 to 37 (cargo fix)
                     stdWeapon: 2,
                     largeWeapon: 1,
                     hullReinforcement: 7,
@@ -865,7 +865,7 @@
                     stdWeapon: 2,
                     largeWeapon: 1,
                     hullReinforcement: 11,
-                    additionalCrew: 2,
+                    additionalCrew: 2,       // Changed from 3 to 2 (crew fix)
                     special: ""
                 },
                 preset: {
@@ -891,7 +891,7 @@
                     stdWeapon: 2,
                     largeWeapon: 1,
                     hullReinforcement: 0,
-                    additionalCrew: 2,
+                    additionalCrew: 2,       // Changed from 3 to 2 (crew fix)
                     special: ""
                 },
                 preset: {
@@ -913,11 +913,11 @@
                     helm: 1,
                     rudder: 3,
                     sail: 3,
-                    cargo: 12,
+                    cargo: 15,      // Changed from 12 to 15 (cargo fix)
                     stdWeapon: 3,
                     largeWeapon: 0,
-                    hullReinforcement: 1,
-                    additionalCrew: 5,
+                    hullReinforcement: 2,    // Changed from 1 to 2 (HP fix)
+                    additionalCrew: 4,       // Changed from 5 to 4 (crew fix)
                     special: ""
                 },
                 preset: {
@@ -937,14 +937,14 @@
                 armor: "Stone",
                 components: {
                     helm: 1,
-                    rudder: 1,
+                    rudder: 2,      // Changed from 1 to 2 (MC fix)
                     sail: 4,
                     cargo: 10,
                     stdWeapon: 0,
                     largeWeapon: 0,
                     hullReinforcement: 3,
-                    additionalCrew: 4,
-                    special: ""
+                    additionalCrew: 3,
+                    special: "beholder floating magic -1 maneuver"
                 },
                 preset: {
                     hp: 300,
@@ -968,8 +968,8 @@
                     cargo: 5,
                     stdWeapon: 1,
                     largeWeapon: 0,
-                    hullReinforcement: 0,
-                    additionalCrew: -1,
+                    hullReinforcement: 6,    // Changed from 0 to 6 (HP fix)
+                    additionalCrew: -1,      // Kept -1 (crew fix)
                     special: ""
                 },
                 preset: {
